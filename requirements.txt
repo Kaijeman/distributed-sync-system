@@ -1,0 +1,6 @@
+
+aiohttp==3.9.5
+redis>=5.0.4
+prometheus_client>=0.20.0
+pytest>=8.2.0
+locust>=2.29.1

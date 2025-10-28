@@ -1,0 +1,125 @@
+
+openapi: 3.0.3
+info:
+  title: Distributed Sync System API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8001
+paths:
+  /health:
+    get:
+      responses:
+        '200':
+          description: OK
+  /raft/state:
+    get:
+      responses:
+        '200':
+          description: State
+  /lock/acquire:
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                resource: {type: string}
+                owner: {type: string}
+                mode: {type: string, enum: [shared, exclusive]}
+                timeout: {type: number}
+      responses:
+        '200': {description: Granted}
+        '307': {description: Redirect to leader}
+        '409': {description: Conflict}
+  /lock/release:
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                resource: {type: string}
+                owner: {type: string}
+      responses:
+        '200': {description: Released}
+  /queue/publish:
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                topic: {type: string}
+                data: {type: object}
+      responses:
+        '200': {description: Published or Redirect}
+        '307': {description: Redirect}
+  /queue/consume:
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                topic: {type: string}
+                consumer: {type: string}
+      responses:
+        '200': {description: Message}
+  /queue/ack:
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                topic: {type: string}
+                id: {type: string}
+      responses:
+        '200': {description: Ack}
+  /cache/put:
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                key: {type: string}
+                value: {type: object}
+      responses:
+        '200': {description: Put}
+  /cache/get:
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                key: {type: string}
+      responses:
+        '200': {description: Value}
+  /cache/invalidate:
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                key: {type: string}
+      responses:
+        '200': {description: Invalidate}
